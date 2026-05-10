@@ -46,8 +46,65 @@ class ModelTrainer:
                 "KNeighbors": KNeighborsRegressor(),
                 "CatBoostRegressor": CatBoostRegressor(verbose=0),
                 "XGBRegressor":XGBRegressor()
-            }            
-            model_report:dict=evaluate_models(X_train=X_train,y_train=y_train,X_test=X_test,y_test=y_test,models=models)
+            }
+            
+            params = {
+    "LinearRegression": {
+        "fit_intercept": [True, False],
+        "positive": [True, False]
+    },
+    "DecisionTree": {
+        "max_depth": [None, 5, 10, 20],
+        "min_samples_split": [2, 5, 10],
+        "min_samples_leaf": [1, 2, 5],
+        "criterion": ["squared_error", "friedman_mse"]
+    },
+    "RandomForest": {
+        "n_estimators": [100, 200, 500],
+        "max_depth": [None, 10, 20],
+        "min_samples_split": [2, 5],
+        "min_samples_leaf": [1, 2],
+        "max_features": ["auto", "sqrt", "log2"]
+    },
+    "GradientBoosting": {
+        "n_estimators": [100, 200],
+        "learning_rate": [0.01, 0.05, 0.1],
+        "max_depth": [3, 5, 7],
+        "subsample": [0.8, 1.0],
+        "min_samples_split": [2, 5],
+        "min_samples_leaf": [1, 2]
+    },
+    "AdaBoost": {
+        "n_estimators": [50, 100, 200],
+        "learning_rate": [0.01, 0.1, 1.0],
+        "loss": ["linear", "square", "exponential"]
+    },
+    "KNeighbors": {
+        "n_neighbors": [3, 5, 7, 9, 11],
+        "weights": ["uniform", "distance"],
+        "p": [1, 2]  # Manhattan vs Euclidean
+    },
+    "CatBoostRegressor": {
+        "iterations": [200, 500],
+        "depth": [4, 6, 8],
+        "learning_rate": [0.01, 0.05, 0.1],
+        "l2_leaf_reg": [1, 3, 5],
+        "border_count": [32, 64, 128]
+    },
+    "XGBRegressor": {
+        "n_estimators": [100, 200, 500],
+        "max_depth": [3, 5, 7],
+        "learning_rate": [0.01, 0.05, 0.1],
+        "subsample": [0.8, 1.0],
+        "colsample_bytree": [0.8, 1.0],
+        "reg_alpha": [0, 0.1, 1],
+        "reg_lambda": [1, 5, 10]
+    }
+}
+
+            
+                        
+            model_report:dict=evaluate_models(X_train=X_train,y_train=y_train,X_test=X_test,y_test=y_test,models=models,params=params)
             
             best_model_score=max(sorted(model_report.values()))
             best_model_name=list(model_report.keys())[
